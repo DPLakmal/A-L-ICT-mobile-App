@@ -1,18 +1,27 @@
-import 'package:almcq/Splash.dart';
+import 'package:almcq/localization/app_language.dart';
+import 'package:almcq/localization/language_controller.dart';
 import 'package:almcq/services/admob.dart';
+import 'package:almcq/splash.dart';
+import 'package:almcq/theme/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
-    systemNavigationBarColor: Colors.black,
     statusBarIconBrightness: Brightness.dark,
+    statusBarBrightness: Brightness.light,
+    systemNavigationBarColor: Colors.white,
     systemNavigationBarIconBrightness: Brightness.dark,
   ));
-  WidgetsFlutterBinding.ensureInitialized();
+
+  await LanguageController.instance.init();
+
   if (!kIsWeb) {
     await Firebase.initializeApp();
   } else {
@@ -33,23 +42,26 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Quiz App',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: const SplashPage(),
+    return ListenableBuilder(
+      listenable: LanguageController.instance,
+      builder: (context, child) {
+        return MaterialApp(
+          title: LanguageController.instance.tr('app_name'),
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: ThemeMode.light,
+          locale: LanguageController.instance.currentLocale,
+          supportedLocales: AppLanguage.values.map((l) => l.locale).toList(),
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          home: const SplashPage(),
+        );
+      },
     );
   }
 }

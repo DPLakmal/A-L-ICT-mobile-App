@@ -1,113 +1,143 @@
+import 'package:almcq/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
-class OptionTile extends StatefulWidget {
-  final String option, description, correctAnswer, optionSelected;
+class OptionTile extends StatelessWidget {
+  final String option;
+  final String description;
+  final String correctAnswer;
+  final String optionSelected;
 
-  const OptionTile(
-      {Key? key,
-      required this.description,
-      required this.correctAnswer,
-      required this.option,
-      required this.optionSelected})
-      : super(key: key);
+  const OptionTile({
+    super.key,
+    required this.description,
+    required this.correctAnswer,
+    required this.option,
+    required this.optionSelected,
+  });
 
-  @override
-  _OptionTileState createState() => _OptionTileState();
-}
-
-class _OptionTileState extends State<OptionTile> {
   @override
   Widget build(BuildContext context) {
+    final bool isSelected = optionSelected == description;
+    final bool isCorrect = description == correctAnswer;
+
+    Color borderColor = AppTheme.lightCardBorder;
+    Color bgColor = Colors.white;
+    Color textColor = AppTheme.lightTextPrimary;
+
+    if (optionSelected.isNotEmpty) {
+      if (isSelected) {
+        if (isCorrect) {
+          borderColor = AppTheme.success;
+          bgColor = AppTheme.success.withValues(alpha: 0.12);
+          textColor = AppTheme.success;
+        } else {
+          borderColor = AppTheme.error;
+          bgColor = AppTheme.error.withValues(alpha: 0.12);
+          textColor = AppTheme.error;
+        }
+      } else if (isCorrect) {
+        borderColor = AppTheme.success;
+        bgColor = AppTheme.success.withValues(alpha: 0.08);
+      }
+    }
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: borderColor, width: 1.5),
+      ),
       child: Row(
         children: [
           Container(
-            height: 28,
-            width: 28,
+            height: 30,
+            width: 30,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-                border: Border.all(
-                    color: widget.optionSelected == widget.description
-                        ? widget.description == widget.correctAnswer
-                            ? Colors.green.withOpacity(0.7)
-                            : Colors.red.withOpacity(0.7)
-                        : Colors.grey,
-                    width: 1.5),
-                color: widget.optionSelected == widget.description
-                    ? widget.description == widget.correctAnswer
-                        ? Colors.green.withOpacity(0.7)
-                        : Colors.red.withOpacity(0.7)
-                    : Colors.white,
-                borderRadius: BorderRadius.circular(24)),
+              color: isSelected ? textColor : AppTheme.lightBackground,
+              borderRadius: BorderRadius.circular(8),
+            ),
             child: Text(
-              widget.option,
+              option,
               style: TextStyle(
-                color: widget.optionSelected == widget.description
-                    ? Colors.white
-                    : Colors.grey,
+                color: isSelected ? Colors.white : AppTheme.lightTextSecondary,
+                fontWeight: FontWeight.w700,
+                fontSize: 13,
               ),
             ),
           ),
-          const SizedBox(
-            width: 8,
-          ),
-          Flexible(
+          const SizedBox(width: 12),
+          Expanded(
             child: Text(
-              widget.description,
+              description,
               style: const TextStyle(
-                  fontSize: 18, color: Color.fromARGB(135, 70, 67, 67)),
+                fontSize: 14.5,
+                color: AppTheme.lightTextPrimary,
+                height: 1.35,
+              ),
             ),
-          )
+          ),
         ],
       ),
     );
   }
 }
 
-class NoOfQuestionTile extends StatefulWidget {
+class NoOfQuestionTile extends StatelessWidget {
   final String text;
   final int number;
 
-  const NoOfQuestionTile({Key? key, required this.text, required this.number})
-      : super(key: key);
+  const NoOfQuestionTile({
+    super.key,
+    required this.text,
+    required this.number,
+  });
 
-  @override
-  _NoOfQuestionTileState createState() => _NoOfQuestionTileState();
-}
-
-class _NoOfQuestionTileState extends State<NoOfQuestionTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 3),
+      margin: const EdgeInsets.symmetric(horizontal: 4),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(14),
-                    bottomLeft: Radius.circular(14)),
-                color: Colors.blue),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                bottomLeft: Radius.circular(10),
+              ),
+              color: AppTheme.primaryColor,
+            ),
             child: Text(
-              "${widget.number}",
-              style: const TextStyle(color: Colors.white),
+              '$number',
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+              ),
             ),
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(14),
-                  bottomRight: Radius.circular(14),
-                ),
-                color: Colors.black54),
-            child: Text(
-              widget.text,
-              style: const TextStyle(color: Colors.white),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(10),
+                bottomRight: Radius.circular(10),
+              ),
+              color: AppTheme.primaryColor.withValues(alpha: 0.15),
             ),
-          )
+            child: Text(
+              text,
+              style: const TextStyle(
+                color: AppTheme.primaryColor,
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+              ),
+            ),
+          ),
         ],
       ),
     );

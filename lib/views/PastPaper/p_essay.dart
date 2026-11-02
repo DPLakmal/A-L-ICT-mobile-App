@@ -1,97 +1,104 @@
 import 'package:almcq/models/pdf_model.dart';
+import 'package:almcq/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class Pessay extends StatelessWidget {
-  const Pessay({Key? key}) : super(key: key);
+  const Pessay({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.lightBackground,
       appBar: AppBar(
-        title: const Text("Essay Paper & Marking Scheme"),
+        title: const Text('Part II - Essay Papers'),
       ),
       body: ListView.builder(
-          shrinkWrap: true,
-          itemCount: 8,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Card(
-                color: Colors.black45,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 30,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        itemCount: 7,
+        itemBuilder: (context, index) {
+          final year = 2021 - index;
+
+          return Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppTheme.lightCardBorder),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.02),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: AppTheme.accentRose.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(14),
                   ),
+                  child: Center(
+                    child: Text(
+                      '$year',
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: AppTheme.accentRose,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("${2021 - index} A/L ICT"),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (index == 0) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const PDF_model(
-                                            pdfname: "saa",
-                                          )));
-                            }
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 50, vertical: 15),
-                                child: Text(
-                                  '${2021 - index} Essay Paper',
-                                  textScaleFactor: 1.8,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              const Icon(
-                                Icons.download,
-                                size: 20.0,
-                              ),
-                            ],
-                          ),
+                      Text(
+                        '$year Essay Questions Paper',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: AppTheme.lightTextPrimary,
                         ),
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      ElevatedButton(
-                        onPressed: () {},
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 20, horizontal: 20),
-                              child: Text(
-                                '${2021 - index} Marking Scheme',
-                                textScaleFactor: 1.8,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 5,
-                            ),
-                            const Icon(
-                              Icons.download,
-                              size: 20.0,
-                            ),
-                          ],
+                      const SizedBox(height: 3),
+                      const Text(
+                        'Part II (B) • Questions 5 to 8',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.lightTextSecondary,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-            );
-          }),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const PDF_model(pdfname: 'saa'),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.accentRose,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 10),
+                  ),
+                  icon: const Icon(Icons.picture_as_pdf_outlined, size: 16),
+                  label: const Text('View PDF', style: TextStyle(fontSize: 12)),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

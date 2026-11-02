@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 const String testDevice = '0b60a0dc8901ca7b635b7294ef48b01a';
 const int maxFailedLoadAttempts = 3;
 
-class _DummyAd {
-  _DummyAd load() => this;
+class DummyAd {
+  DummyAd load() => this;
   void dispose() {}
 }
 
@@ -15,11 +15,11 @@ class AdmobService {
       'ca-app-pub-7184513529131669/3476776620';
 
   static void initialize() {
-    // Google Ads function held
+    // Google Ads SDK hook point
   }
 
-  static _DummyAd createBannerAd() {
-    return _DummyAd();
+  static DummyAd createBannerAd() {
+    return DummyAd();
   }
 
   void showBannerAd() {}
@@ -31,7 +31,7 @@ class AdmobService {
 
 class AdWidget extends StatelessWidget {
   final dynamic ad;
-  const AdWidget({Key? key, required this.ad}) : super(key: key);
+  const AdWidget({super.key, required this.ad});
 
   @override
   Widget build(BuildContext context) {

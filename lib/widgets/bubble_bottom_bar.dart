@@ -1,456 +1,230 @@
-import 'dart:math' as math;
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:badges/badges.dart' as badges;
 
-const double _kActiveFontSize = 14.0;
-const double _kBottomMargin = 8.0;
 enum BubbleBottomBarFabLocation { end, center }
 
-// ignore: must_be_immutable
-class BubbleBottomBar extends StatefulWidget {
-  BubbleBottomBar({
-    Key? key,
-    required this.items,
-    this.onTap,
-    this.currentIndex = 0,
-    required this.opacity,
-    this.iconSize = 24.0,
-    this.borderRadius,
-    this.elevation,
-    this.backgroundColor,
-    this.hasNotch = false,
-    this.hasInk = false,
-    this.inkColor,
-    this.fabLocation,
-    this.tilesPadding = EdgeInsets.zero,
-  })  : assert(items.length >= 2),
-        assert(
-          items.every((BubbleBottomBarItem item) => item.title != null) == true,
-          'Every item must have a non-null title',
-        ),
-        assert(0 <= currentIndex! && currentIndex < items.length),
-        assert(iconSize != null),
-        super(key: key);
-
-  final List<BubbleBottomBarItem> items;
-  final ValueChanged<int?>? onTap;
-  int? currentIndex;
-  final double? iconSize;
-  final double opacity;
-  final BorderRadius? borderRadius;
-  final double? elevation;
-  final Color? backgroundColor;
-  final bool hasNotch;
-  final bool hasInk;
-  final BubbleBottomBarFabLocation? fabLocation;
-  final Color? inkColor;
-  final EdgeInsets tilesPadding;
-
-  @override
-  _BottomNavigationBarState createState() => _BottomNavigationBarState();
-}
-
-class _BottomNavigationTile extends StatelessWidget {
-  const _BottomNavigationTile(
-    this.item,
-    this.opacity,
-    this.animation,
-    this.iconSize, {
-    this.onTap,
-    this.flex,
-    this.selected = false,
-    this.indexLabel,
-    this.ink = false,
-    this.inkColor,
-    this.padding,
-  });
-
-  final BubbleBottomBarItem item;
-  final Animation<double> animation;
-  final double iconSize;
-  final VoidCallback? onTap;
-  final double? flex;
-  final bool selected;
-  final String? indexLabel;
-  final double opacity;
-  final bool ink;
-  final Color? inkColor;
-  final EdgeInsets? padding;
-
-  @override
-  Widget build(BuildContext context) {
-    int size;
-    Widget label;
-    size = (flex! * 1000.0).round();
-    label = _Label(
-      animation: animation,
-      item: item,
-      color: item.backgroundColor!,
-    );
-
-    return Expanded(
-      flex: size,
-      child: Semantics(
-        container: true,
-        header: true,
-        selected: selected,
-        child: Stack(
-          children: <Widget>[
-            Padding(
-              padding: padding!,
-              child: InkResponse(
-                borderRadius: const BorderRadius.horizontal(
-                  right: Radius.circular(50),
-                  left: Radius.circular(50),
-                ),
-                containedInkWell: true,
-                onTap: onTap,
-                splashColor: ink
-                    ? inkColor ?? Theme.of(context).splashColor
-                    : Colors.transparent,
-                highlightColor: Colors.transparent,
-                child: Container(
-                  height: 48,
-                  decoration: BoxDecoration(
-                      color: selected
-                          ? item.backgroundColor!.withOpacity(opacity)
-                          : Colors.transparent,
-                      borderRadius: const BorderRadius.horizontal(
-                        right: Radius.circular(50),
-                        left: Radius.circular(50),
-                      )),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: selected
-                        ? MainAxisAlignment.spaceEvenly
-                        : MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    children: <Widget>[
-                      _TileIcon(
-                        animation: animation,
-                        iconSize: iconSize,
-                        selected: selected,
-                        item: item,
-                      ),
-                      AnimatedCrossFade(
-                        alignment: const Alignment(0, 0),
-                        firstChild: label,
-                        secondChild: Container(),
-                        duration: const Duration(milliseconds: 200),
-                        sizeCurve: Curves.fastOutSlowIn,
-                        firstCurve: Curves.fastOutSlowIn,
-                        secondCurve: Curves.fastOutSlowIn.flipped,
-                        crossFadeState: selected
-                            ? CrossFadeState.showFirst
-                            : CrossFadeState.showSecond,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Semantics(
-              label: indexLabel,
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _TileIcon extends StatelessWidget {
-  const _TileIcon({
-    Key? key,
-    required this.animation,
-    required this.iconSize,
-    required this.selected,
-    required this.item,
-  }) : super(key: key);
-
-  final Animation<double> animation;
-  final double iconSize;
-  final bool selected;
-  final BubbleBottomBarItem item;
-
-  @override
-  Widget build(BuildContext context) {
-    Color iconColor;
-    iconColor = Colors.white;
-    return Align(
-      alignment: Alignment.topCenter,
-      heightFactor: 1.0,
-      child: badges.Badge(
-        showBadge: item.showBadge,
-        badgeContent: item.badge,
-        badgeColor: item.badgeColor,
-        animationType: badges.BadgeAnimationType.fade,
-        child: Container(
-          child: IconTheme(
-            data: IconThemeData(
-              color: selected ? item.backgroundColor : iconColor,
-              size: iconSize,
-            ),
-            child: selected ? item.activeIcon! : item.icon,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _Label extends StatelessWidget {
-  _Label({
-    Key? key,
-    required this.animation,
-    required this.item,
-    required this.color,
-  }) : super(key: key);
-
-  final Animation<double> animation;
-  final BubbleBottomBarItem item;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.center,
-      heightFactor: 1.0,
-      child: Container(
-        child: FadeTransition(
-          alwaysIncludeSemantics: true,
-          opacity: animation,
-          child: DefaultTextStyle.merge(
-            style: TextStyle(
-              fontSize: _kActiveFontSize,
-              fontWeight: FontWeight.w600,
-              color: color,
-            ),
-            child: item.title!,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _BottomNavigationBarState extends State<BubbleBottomBar>
-    with TickerProviderStateMixin {
-  List<AnimationController> _controllers = <AnimationController>[];
-  late List<CurvedAnimation> _animations;
-
-  ValueListenable<ScaffoldGeometry>? geometryListenable;
-
-  void _resetState() {
-    for (AnimationController controller in _controllers) {
-      controller.dispose();
-    }
-
-    _controllers =
-        List<AnimationController>.generate(widget.items.length, (int index) {
-      return AnimationController(
-        duration: const Duration(milliseconds: 200),
-        vsync: this,
-      )..addListener(_rebuild);
-    });
-    _animations =
-        List<CurvedAnimation>.generate(widget.items.length, (int index) {
-      return CurvedAnimation(
-        parent: _controllers[index],
-        curve: Curves.fastOutSlowIn,
-        reverseCurve: Curves.fastOutSlowIn.flipped,
-      );
-    });
-    _controllers[widget.currentIndex!].value = 1.0;
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    geometryListenable = Scaffold.geometryOf(context);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _resetState();
-  }
-
-  void _rebuild() {
-    setState(() {});
-  }
-
-  @override
-  void dispose() {
-    for (AnimationController controller in _controllers) {
-      controller.dispose();
-    }
-    super.dispose();
-  }
-
-  double _evaluateFlex(Animation<double> animation) => animation.value;
-
-  @override
-  void didUpdateWidget(BubbleBottomBar oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (widget.items.length != oldWidget.items.length) {
-      _resetState();
-      return;
-    }
-
-    if (widget.currentIndex != oldWidget.currentIndex) {
-      _controllers[oldWidget.currentIndex!].reverse();
-      _controllers[widget.currentIndex!].forward();
-    }
-  }
-
-  List<Widget> _createTiles() {
-    final MaterialLocalizations? localizations =
-        MaterialLocalizations.of(context);
-    final List<Widget> children = <Widget>[];
-    for (int i = 0; i < widget.items.length; i += 1) {
-      children.add(
-        _BottomNavigationTile(
-          widget.items[i],
-          widget.opacity,
-          _animations[i],
-          widget.iconSize!,
-          onTap: () {
-            if (widget.onTap != null) widget.onTap!(i);
-          },
-          flex: _evaluateFlex(_animations[i]),
-          selected: i == widget.currentIndex,
-          indexLabel: localizations?.tabLabel(
-              tabIndex: i + 1, tabCount: widget.items.length),
-          ink: widget.hasInk,
-          inkColor: widget.inkColor,
-          padding: widget.tilesPadding,
-        ),
-      );
-    }
-    if (widget.fabLocation == BubbleBottomBarFabLocation.center) {
-      children.insert(
-          1,
-          const Spacer(
-            flex: 1500,
-          ));
-    }
-    return children;
-  }
-
-  Widget _createContainer(List<Widget> tiles) {
-    return DefaultTextStyle.merge(
-      overflow: TextOverflow.ellipsis,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: tiles,
-      ),
-    );
-  }
-
-  Widget _inner(double additionalBottomPadding) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-      ),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-            minHeight: kBottomNavigationBarHeight + additionalBottomPadding),
-        child: Material(
-          type: MaterialType.transparency,
-          child: Padding(
-            padding: EdgeInsets.only(
-                bottom: additionalBottomPadding,
-                right: widget.fabLocation == BubbleBottomBarFabLocation.end
-                    ? 72
-                    : 0),
-            child: MediaQuery.removePadding(
-              context: context,
-              removeBottom: true,
-              child: _createContainer(_createTiles()),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    assert(debugCheckHasDirectionality(context));
-    assert(debugCheckHasMaterialLocalizations(context));
-    final double additionalBottomPadding =
-        math.max(MediaQuery.of(context).padding.bottom - _kBottomMargin, 0.0);
-    return Semantics(
-        explicitChildNodes: true,
-        child: widget.hasNotch
-            ? PhysicalShape(
-                elevation: widget.elevation ?? 8.0,
-                color: widget.backgroundColor ?? Colors.white,
-                clipper: _BubbleBottomBarClipper(
-                  shape: const CircularNotchedRectangle(),
-                  geometry: geometryListenable!,
-                  notchMargin: 8,
-                ),
-                child: _inner(additionalBottomPadding),
-              )
-            : Material(
-                elevation: widget.elevation ?? 8.0,
-                color: widget.backgroundColor ?? Colors.white,
-                borderRadius: widget.borderRadius ?? BorderRadius.zero,
-                child: _inner(additionalBottomPadding),
-              ));
-  }
-}
-
+/// An individual item in [BubbleBottomBar].
 class BubbleBottomBarItem {
-  const BubbleBottomBarItem({
-    required this.icon,
-    required this.activeIcon,
-    this.title,
-    this.showBadge = false,
-    this.badgeColor = Colors.black,
-    this.badge,
-    this.backgroundColor,
-  });
-
   final Widget icon;
   final Widget? activeIcon;
   final Widget? title;
+  final Color? backgroundColor;
   final bool showBadge;
   final Color badgeColor;
   final Widget? badge;
-  final Color? backgroundColor;
+
+  const BubbleBottomBarItem({
+    required this.icon,
+    this.activeIcon,
+    this.title,
+    this.backgroundColor,
+    this.showBadge = false,
+    this.badgeColor = const Color(0xFFEF4444),
+    this.badge,
+  });
 }
 
-class _BubbleBottomBarClipper extends CustomClipper<Path> {
-  const _BubbleBottomBarClipper({
-    required this.geometry,
-    required this.shape,
-    required this.notchMargin,
-  }) : super(reclip: geometry);
+/// A modern, responsive animated bubble navigation bar.
+///
+/// Features smooth expanding pill capsules for active items,
+/// distinct per-tab active accent colors, responsive text truncation
+/// for multilingual labels (Sinhala, Tamil, English), and safe-area compliance.
+class BubbleBottomBar extends StatelessWidget {
+  final List<BubbleBottomBarItem> items;
+  final int currentIndex;
+  final ValueChanged<int?>? onTap;
+  final double elevation;
+  final BorderRadius? borderRadius;
+  final Color? backgroundColor;
+  final double opacity;
+  final bool hasInk;
+  final Color? inkColor;
+  final double? iconSize;
+  final EdgeInsets? tilesPadding;
+  final bool hasNotch;
+  final BubbleBottomBarFabLocation? fabLocation;
 
-  final ValueListenable<ScaffoldGeometry> geometry;
-  final NotchedShape shape;
-  final double notchMargin;
+  const BubbleBottomBar({
+    super.key,
+    required this.items,
+    required this.currentIndex,
+    this.onTap,
+    this.elevation = 10.0,
+    this.borderRadius,
+    this.backgroundColor,
+    this.opacity = 0.15,
+    this.hasInk = true,
+    this.inkColor,
+    this.iconSize = 22.0,
+    this.tilesPadding,
+    this.hasNotch = false,
+    this.fabLocation,
+  }) : assert(items.length >= 2, 'BubbleBottomBar must have at least 2 items');
 
   @override
-  Path getClip(Size size) {
-    final Rect? button = geometry.value.floatingActionButtonArea?.translate(
-      0.0,
-      geometry.value.bottomNavigationBarTop! * -1.0,
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final barBg = backgroundColor ??
+        (isDark ? const Color(0xFF1E293B) : Colors.white);
+    final borderColor = isDark
+        ? const Color(0xFF334155)
+        : const Color(0xFFE2E8F0);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: barBg,
+        borderRadius: borderRadius ??
+            const BorderRadius.vertical(top: Radius.circular(22)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
+            blurRadius: 16,
+            offset: const Offset(0, -4),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.02),
+            blurRadius: 4,
+            offset: const Offset(0, -1),
+          ),
+        ],
+        border: Border(
+          top: BorderSide(color: borderColor, width: 1),
+        ),
+      ),
+      child: SafeArea(
+        top: false,
+        bottom: true,
+        child: Padding(
+          padding: tilesPadding ??
+              const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: List.generate(items.length, (index) {
+              return _BubbleTabTile(
+                item: items[index],
+                isSelected: index == currentIndex,
+                opacity: opacity,
+                hasInk: hasInk,
+                inkColor: inkColor,
+                iconSize: iconSize ?? 22.0,
+                isDark: isDark,
+                onTap: () => onTap?.call(index),
+              );
+            }),
+          ),
+        ),
+      ),
     );
-
-    return shape.getOuterPath(Offset.zero & size, button?.inflate(notchMargin));
   }
+}
+
+class _BubbleTabTile extends StatelessWidget {
+  final BubbleBottomBarItem item;
+  final bool isSelected;
+  final double opacity;
+  final bool hasInk;
+  final Color? inkColor;
+  final double iconSize;
+  final bool isDark;
+  final VoidCallback onTap;
+
+  const _BubbleTabTile({
+    required this.item,
+    required this.isSelected,
+    required this.opacity,
+    required this.hasInk,
+    required this.inkColor,
+    required this.iconSize,
+    required this.isDark,
+    required this.onTap,
+  });
 
   @override
-  bool shouldReclip(_BubbleBottomBarClipper oldClipper) {
-    return oldClipper.geometry != geometry ||
-        oldClipper.shape != shape ||
-        oldClipper.notchMargin != notchMargin;
+  Widget build(BuildContext context) {
+    final activeColor = item.backgroundColor ?? Theme.of(context).primaryColor;
+    final inactiveColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
+
+    Widget iconWidget = isSelected ? (item.activeIcon ?? item.icon) : item.icon;
+
+    if (item.showBadge) {
+      iconWidget = Badge(
+        backgroundColor: item.badgeColor,
+        label: item.badge,
+        child: iconWidget,
+      );
+    }
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24),
+        splashColor: hasInk
+            ? (inkColor ?? activeColor.withValues(alpha: 0.16))
+            : Colors.transparent,
+        highlightColor: Colors.transparent,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOutCubic,
+          padding: isSelected
+              ? const EdgeInsets.symmetric(horizontal: 14, vertical: 8)
+              : const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? activeColor.withValues(alpha: opacity)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: isSelected
+                  ? activeColor.withValues(alpha: 0.28)
+                  : Colors.transparent,
+              width: 1,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconTheme(
+                data: IconThemeData(
+                  color: isSelected ? activeColor : inactiveColor,
+                  size: iconSize,
+                ),
+                child: iconWidget,
+              ),
+              AnimatedCrossFade(
+                alignment: Alignment.centerLeft,
+                firstChild: Padding(
+                  padding: const EdgeInsets.only(left: 7),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 140),
+                    child: DefaultTextStyle.merge(
+                      style: TextStyle(
+                        color: activeColor,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12.5,
+                        letterSpacing: 0.1,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      child: item.title ?? const SizedBox.shrink(),
+                    ),
+                  ),
+                ),
+                secondChild: const SizedBox.shrink(),
+                crossFadeState: isSelected
+                    ? CrossFadeState.showFirst
+                    : CrossFadeState.showSecond,
+                duration: const Duration(milliseconds: 250),
+                firstCurve: Curves.easeOutCubic,
+                secondCurve: Curves.easeInCubic,
+                sizeCurve: Curves.easeOutCubic,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

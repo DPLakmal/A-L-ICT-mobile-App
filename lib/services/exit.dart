@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:almcq/localization/language_controller.dart';
+import 'package:almcq/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 Future<bool> showExitPopup(BuildContext context) async {
@@ -6,45 +8,36 @@ Future<bool> showExitPopup(BuildContext context) async {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        content: SizedBox(
-          height: 90,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("Do you want to exit?"),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        print('yes selected');
-                        exit(0);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red.shade800,
-                      ),
-                      child: const Text("Yes"),
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        print('no selected');
-                        Navigator.of(context).pop(false);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                      ),
-                      child: const Text("No", style: TextStyle(color: Colors.black)),
-                    ),
-                  )
-                ],
-              )
-            ],
-          ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            const Icon(Icons.exit_to_app_rounded,
+                color: AppTheme.primaryColor),
+            const SizedBox(width: 10),
+            Text(context.tr('exit_title')),
+          ],
         ),
+        content: Text(
+          context.tr('exit_desc'),
+          style: const TextStyle(color: AppTheme.lightTextSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(context.tr('stay')),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.error,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+              exit(0);
+            },
+            child: Text(context.tr('exit')),
+          ),
+        ],
       );
     },
   );
