@@ -1,0 +1,8 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - 'Old al ict app data/**'
+
+linter:
+  rules:

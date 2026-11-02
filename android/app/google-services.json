@@ -1,0 +1,100 @@
+{
+  "project_info": {
+    "project_number": "1021828390714",
+    "project_id": "quiz-app-9f658",
+    "storage_bucket": "quiz-app-9f658.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1021828390714:android:e279a781eccc1928feba03",
+        "android_client_info": {
+          "package_name": "com.entroop.alict"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1021828390714-79sp8ht90r6khcpqrhgeifcabq00bhim.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.entroop.alict",
+            "certificate_hash": "2b595b2229133b7d9706a64701700b6f0f4ebdc6"
+          }
+        },
+        {
+          "client_id": "1021828390714-ngbll75s5rg4s1c9v9r5nn1ptao09p5b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.entroop.alict",
+            "certificate_hash": "b902f0e4c3f2bf20153e00ca314b6bf8d043218d"
+          }
+        },
+        {
+          "client_id": "1021828390714-oafu276r8jv7mjslpkjn01sni50ukhua.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.entroop.alict",
+            "certificate_hash": "7988ef273807b8a74ec88dc73cc86b53306055d9"
+          }
+        },
+        {
+          "client_id": "1021828390714-qbh1mrm6gdkm25j8v6lk6th4g2quo1b2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.entroop.alict",
+            "certificate_hash": "872c84653222216f069bf7331ae7a7a4a3d5099f"
+          }
+        },
+        {
+          "client_id": "1021828390714-8nqbss621j6c3p5api2qqeni75bahj23.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7evHGYV8ndRGnnEW0PyCCAB-Zscl1SRA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1021828390714-8nqbss621j6c3p5api2qqeni75bahj23.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1021828390714:android:0be0757f8ca01b92feba03",
+        "android_client_info": {
+          "package_name": "com.example.alict_web"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1021828390714-8nqbss621j6c3p5api2qqeni75bahj23.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7evHGYV8ndRGnnEW0PyCCAB-Zscl1SRA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1021828390714-8nqbss621j6c3p5api2qqeni75bahj23.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
